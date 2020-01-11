@@ -1,0 +1,4 @@
+name: UndeadReborn
+main: hm.moe.pokkedoll.undeadreborn.Main
+version: '1.0 [Coded by Clojure]'
+author: Emorard
