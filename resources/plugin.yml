@@ -1,4 +1,7 @@
 name: UndeadReborn
 main: hm.moe.pokkedoll.undeadreborn.Main
-version: '1.0 [Coded by Clojure]'
+version: '1.1'
+description: Spawn zombie when player die
 author: Emorard
+website: https://github.com/Emorard/UndeadReborn
+

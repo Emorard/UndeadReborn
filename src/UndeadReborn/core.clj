@@ -11,12 +11,10 @@
   (.info (.getLogger this) "Plugin Enabled")
   (.registerEvents (Bukkit/getPluginManager) (new URListener this) this)
   (when-not (.exists (.getDataFolder this)) (.mkdir (.getDataFolder this)) (.createNewFile (File. (.getDataFolder this) "/config.yml")))
-  (.saveDefaultConfig this)
-  )
+  (.saveDefaultConfig this))
 
 (defn on-disable
   "onDisable"
   [#^Main this]
-  (.info (.getLogger this) "Plugin Disabled")
-  )
+  (.info (.getLogger this) "Plugin Disabled"))
 

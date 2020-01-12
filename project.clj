@@ -1,4 +1,4 @@
-(defproject UndeadReborn "1.0-SNAPSHOT"
+(defproject UndeadReborn "1.1-SNAPSHOT"
      :java-source-paths ["java-src"]
      :javac-options ["-d" "classes/" "-source" "1.8" "-target" "1.8"]
      :repositories [ ["spigot-repo" "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"] ]
