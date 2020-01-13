@@ -1,10 +1,6 @@
 name: Clojure CI
 
-on:
-  push:
-    tags: 
-      - v*
-      - t*
+on: [push]
 
 jobs:
   build:
