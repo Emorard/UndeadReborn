@@ -1,4 +1,4 @@
-(ns UndeadReborn.URListener
+(ns undeadreborn.URListener
   (:gen-class
     :init init
     :state state

@@ -1,8 +1,8 @@
-(ns UndeadReborn.core
-  (:gen-class :name UndeadReborn.core.Main)
+(ns undeadreborn.core
+  (:gen-class :name undeadreborn.core.Main)
   (:import (hm.moe.pokkedoll.undeadreborn Main)
            (org.bukkit Bukkit)
-           (UndeadReborn URListener)
+           (undeadreborn URListener)
            (java.io File)))
 
 (defn on-enable
