@@ -7,7 +7,7 @@ Paper 1.12.2
 
 ## 使用方法
 
-0. Releaseから最新版(Paper 1.12.2)をダウンロードする
+0. Releaseから最新版をダウンロードする
 1. plugins/フォルダにいれる
 2. 起動する
 3. plugins/UndeadReborn/config.ymlにworld: <適用させたいワールド>を入力
