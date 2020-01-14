@@ -19,7 +19,7 @@
            (org.bukkit.attribute Attribute)))
 
 (def entityType {"ZOMBIE" EntityType/ZOMBIE, "PLAYER" EntityType/PLAYER})
-
+(def attribute {"GENERIC_MOVEMENT_SPEED" Attribute/GENERIC_MOVEMENT_SPEED, "GENERIC_MAX_HEALTH" Attribute/GENERIC_MAX_HEALTH})
 ; ゾンビのインベントリマップ
 (def inventory-map (HashMap.))
 ; Undroppableなアイテムマップ
@@ -50,9 +50,11 @@
       (let [player ^Player(.getEntity event)]
         (when (and (= [(.getName (.getWorld player)) (getField this :world)]) (= [(.getGameMode player) (GameMode/SURVIVAL)]))
           (let [zombie ^Zombie(.spawnEntity (.getWorld (.getEntity event)) (.getLocation (.getEntity event)) (entityType "ZOMBIE"))]
+            (.setBaseValue (.getAttribute zombie (attribute "GENERIC_MOVEMENT_SPEED")) 0.35)
+            (.setBaseValue (.getAttribute zombie (attribute "GENERIC_MAX_HEALTH")) 5.0)
             (.setHealth zombie 5.0)
-            (.setBaseValue (.getAttribute zombie (Attribute/GENERIC_MOVEMENT_SPEED)) 0.35)
             (.setCustomName zombie (str (.getName player) "'s Zombie"))
+            (.setCustomNameVisible zombie true)
             (.setRemoveWhenFarAway zombie false)
             ; プレイヤーゾンビを作成するための処理
             (let [cloned (ArrayList. (filter #(instance? ItemStack %) (.getDrops event))) equip (.getEquipment (cast LivingEntity zombie)) pEquip (.getEquipment player)]
