@@ -43,27 +43,28 @@
       (= (.getEntityType event) (entityType "ZOMBIE"))
       (let [entity (.getEntity event) uuid (.getUniqueId (.getEntity event))]
         (if (.containsKey inventory-map uuid)
-          (doseq [drop (.get inventory-map uuid)]
-            (.dropItem (.getWorld entity) (.add (.getLocation entity) 0 1 0) drop)
-            (.remove inventory-map uuid))))
+          (let [world (-> entity .getWorld) location (-> (-> entity .getLocation) (.add 0 1 0))]
+            (doseq [drop (.get inventory-map uuid)]
+              (.dropItem world location drop)
+              (.remove inventory-map uuid)))))
       (= (.getEntityType event) (entityType "PLAYER"))
       (let [player ^Player(.getEntity event)]
         (when (and (= [(.getName (.getWorld player)) (getField this :world)]) (= [(.getGameMode player) (GameMode/SURVIVAL)]))
           (let [zombie ^Zombie(.spawnEntity (.getWorld (.getEntity event)) (.getLocation (.getEntity event)) (entityType "ZOMBIE"))]
-            (.setBaseValue (.getAttribute zombie (attribute "GENERIC_MOVEMENT_SPEED")) 0.35)
-            (.setBaseValue (.getAttribute zombie (attribute "GENERIC_MAX_HEALTH")) 5.0)
+            (-> zombie (.getAttribute (attribute "GENERIC_MOVEMENT_SPEED")) (.setBaseValue 0.35))
+            (-> zombie (.getAttribute (attribute "GENERIC_MAX_HEALTH")) (.setBaseValue 5.0))
             (.setHealth zombie 5.0)
             (.setCustomName zombie (str (.getName player) "'s Zombie"))
             (.setCustomNameVisible zombie true)
             (.setRemoveWhenFarAway zombie false)
             ; プレイヤーゾンビを作成するための処理
             (let [cloned (ArrayList. (filter #(instance? ItemStack %) (.getDrops event))) equip (.getEquipment (cast LivingEntity zombie)) pEquip (.getEquipment player)]
-              (.setItemInHand equip (.getItemInMainHand pEquip)) (.setItemInMainHandDropChance equip 0)
-              (.setItemInOffHand equip (.getItemInOffHand pEquip)) (.setItemInOffHandDropChance equip 0)
-              (.setHelmet equip (playerSkull player)) (.setHelmetDropChance equip 0)
-              (.setChestplate equip (.getChestplate pEquip)) (.setChestplateDropChance equip 0)
-              (.setLeggings equip (.getLeggings pEquip)) (.setLeggingsDropChance equip 0)
-              (.setBoots equip (.getBoots pEquip)) (.setBootsDropChance equip 0)
+              (-> equip (.setItemInMainHand (.getItemInMainHand pEquip))) (.setItemInMainHandDropChance equip 0)
+              (-> equip (.setItemInOffHand (.getItemInOffHand pEquip))) (.setItemInOffHandDropChance equip 0)
+              (-> equip (.setHelmet (playerSkull player))) (.setHelmetDropChance equip 0)
+              (-> equip (.setChestplate (.getChestplate pEquip))) (.setChestplateDropChance equip 0)
+              (-> equip (.setLeggings (.getLeggings pEquip))) (.setLeggingsDropChance equip 0)
+              (-> equip (.setBoots (.getBoots pEquip))) (.setBootsDropChance equip 0)
               ; Undroppableなアイテム
               (def undroppable (filter #(and (.hasItemMeta %) (.hasLore (.getItemMeta %)) (.contains (.getLore (.getItemMeta %)) (ChatColor/translateAlternateColorCodes (char (int \&)) "&6Undroppable"))) cloned))
               (when (not-empty undroppable)
@@ -76,7 +77,7 @@
 (defn -onRespawn [this #^PlayerRespawnEvent event]
   (let [uuid (.getUniqueId (.getPlayer event))]
     (when (.containsKey undroppable-map uuid)
-      (.addItem (.getInventory (.getPlayer event)) (into-array ItemStack (.get undroppable-map uuid)))
+      (-> event .getPlayer .getInventory (.addItem (into-array ItemStack (.get undroppable-map uuid))))
       (.remove undroppable-map uuid))))
 
 (defn cleanUp [this]

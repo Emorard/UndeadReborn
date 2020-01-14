@@ -8,13 +8,13 @@
 (defn on-enable
   "onEnable"
   [#^Main this]
-  (.info (.getLogger this) "Plugin Enabled")
-  (.registerEvents (Bukkit/getPluginManager) (new URListener this) this)
-  (when-not (.exists (.getDataFolder this)) (.mkdir (.getDataFolder this)) (.createNewFile (File. (.getDataFolder this) "/config.yml")))
+  (-> this .getLogger (.info "Plugin Enabled"))
+  (-> (Bukkit/getPluginManager) (.registerEvents (URListener. this) this))
+  (when-not (-> this .getDataFolder .exists) (-> this .getDataFolder .mkdir) (-> (File. (.getDataFolder this) "/config.yml") .createNewFile))
   (.saveDefaultConfig this))
 
 (defn on-disable
   "onDisable"
   [#^Main this]
-  (.info (.getLogger this) "Plugin Disabled"))
+  (-> this .getLogger (.info "Plugin Disabled")))
 
