@@ -49,7 +49,7 @@
               (.remove inventory-map uuid)))))
       (= (.getEntityType event) (entityType "PLAYER"))
       (let [player ^Player(.getEntity event)]
-        (when (and (= [(.getName (.getWorld player)) (getField this :world)]) (= [(.getGameMode player) (GameMode/SURVIVAL)]) (not (.isEmpty (.getContents (.getInventory player)))))
+        (when (and (= [(.getName (.getWorld player)) (getField this :world)]) (= [(.getGameMode player) (GameMode/SURVIVAL)]))
           (let [zombie ^Zombie(.spawnEntity (.getWorld (.getEntity event)) (.getLocation (.getEntity event)) (entityType "ZOMBIE"))]
             (-> zombie (.getAttribute (attribute "GENERIC_MOVEMENT_SPEED")) (.setBaseValue 0.35))
             (-> zombie (.getAttribute (attribute "GENERIC_MAX_HEALTH")) (.setBaseValue 5.0))
@@ -90,7 +90,7 @@
     (println "CleanUp stopped")))
 
 (defn -onEnable [this #^PluginEnableEvent event]
-  (do
+  (when (= (.getName (.getPlugin event)) "UndeadReborn")
     (println "Cleanup zombies...")
     (cleanUp this)))
 
