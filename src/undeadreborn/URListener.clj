@@ -25,6 +25,8 @@
 
 (def worldguard (WorldGuardPlugin/inst))
 
+(defstruct dropping :contents :equipment)
+
 ; ゾンビのインベントリマップ
 (def inventory-map (HashMap.))
 ; Undroppableなアイテムマップ
