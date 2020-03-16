@@ -45,7 +45,7 @@
 
 (defn playerSkull [^Player player]
   (let [item (ItemStack. (Material/getMaterial "SKULL_ITEM") 1 (short 3))]
-    (let [sm ^SkullMeta(.getItemMeta item)]
+    (let [sm ^SkullMeta (.getItemMeta item)]
       (.setOwner sm (.getName player))
       (.setItemMeta item sm)
       item)))
@@ -62,36 +62,32 @@
               (.remove inventory-map uuid)))))
       (= (.getEntityType event) (entityType "PLAYER"))
       (let [player ^Player (.getEntity event)]
-        (if (isPokkeTown player)
-          (let [contents (ArrayList. (filter #(instance? ItemStack %) (.getDrops event)))]
-            (when (not-empty contents) (.put undroppable-map (.getUniqueId player) contents))
-            (.clear (.getDrops event)))
-          (when (and (= (.getName (.getWorld player)) (getField this :world)) (= (.getGameMode player) (GameMode/SURVIVAL)))
-            (let [zombie ^Zombie (.spawnEntity (.getWorld (.getEntity event)) (.getLocation (.getEntity event)) (entityType "ZOMBIE"))]
-              (-> zombie (.getAttribute (attribute "GENERIC_MOVEMENT_SPEED")) (.setBaseValue 0.35))
-              (-> zombie (.getAttribute (attribute "GENERIC_MAX_HEALTH")) (.setBaseValue 5.0))
-              (-> zombie (.addPotionEffect (PotionEffect. (PotionEffectType/SLOW) 60 10)))
-              (-> zombie (.addPotionEffect (PotionEffect. (PotionEffectType/WEAKNESS) 60 10)))
-              (.setHealth zombie 5.0)
-              (.setCustomName zombie (str (.getName player) "'s Zombie"))
-              (.setCustomNameVisible zombie true)
-              (.setRemoveWhenFarAway zombie false)
-              ; プレイヤーゾンビを作成するための処理
-              (let [cloned (ArrayList. (filter #(instance? ItemStack %) (.getDrops event))) equip (.getEquipment (cast LivingEntity zombie)) pEquip (.getEquipment player)]
-                (-> equip (.setItemInMainHand (.getItemInMainHand pEquip))) (.setItemInMainHandDropChance equip 0)
-                (-> equip (.setItemInOffHand (.getItemInOffHand pEquip))) (.setItemInOffHandDropChance equip 0)
-                (-> equip (.setHelmet (playerSkull player))) (.setHelmetDropChance equip 0)
-                (-> equip (.setChestplate (.getChestplate pEquip))) (.setChestplateDropChance equip 0)
-                (-> equip (.setLeggings (.getLeggings pEquip))) (.setLeggingsDropChance equip 0)
-                (-> equip (.setBoots (.getBoots pEquip))) (.setBootsDropChance equip 0)
-                ; Undroppableなアイテム
-                (def undroppable (filter #(and (.hasItemMeta %) (.hasLore (.getItemMeta %)) (undroppable? (re-find #"Undroppable.*\%" (clojure.string/join "," (.getLore (.getItemMeta %)))))) cloned))
-                (when (not-empty undroppable)
-                  (.removeAll cloned undroppable)
-                  (.put undroppable-map (.getUniqueId player) (ArrayList. undroppable)))
-                (when (not-empty cloned) (.put inventory-map (.getUniqueId zombie) cloned))
-                ; ClojureはSeqは遅延するのに注意
-                (.clear (.getDrops event))))))))))
+        (when (and (= (.getName (.getWorld player)) (getField this :world)) (= (.getGameMode player) (GameMode/SURVIVAL)))
+          (let [zombie ^Zombie (.spawnEntity (.getWorld (.getEntity event)) (.getLocation (.getEntity event)) (entityType "ZOMBIE"))]
+            (-> zombie (.getAttribute (attribute "GENERIC_MOVEMENT_SPEED")) (.setBaseValue 0.35))
+            (-> zombie (.getAttribute (attribute "GENERIC_MAX_HEALTH")) (.setBaseValue 5.0))
+            (-> zombie (.addPotionEffect (PotionEffect. (PotionEffectType/SLOW) 60 10)))
+            (-> zombie (.addPotionEffect (PotionEffect. (PotionEffectType/WEAKNESS) 60 10)))
+            (.setHealth zombie 5.0)
+            (.setCustomName zombie (str (.getName player) "'s Zombie"))
+            (.setCustomNameVisible zombie true)
+            (.setRemoveWhenFarAway zombie false)
+            ; プレイヤーゾンビを作成するための処理
+            (let [cloned (ArrayList. (filter #(instance? ItemStack %) (.getDrops event))) equip (.getEquipment (cast LivingEntity zombie)) pEquip (.getEquipment player)]
+              (-> equip (.setItemInMainHand (.getItemInMainHand pEquip))) (.setItemInMainHandDropChance equip 0)
+              (-> equip (.setItemInOffHand (.getItemInOffHand pEquip))) (.setItemInOffHandDropChance equip 0)
+              (-> equip (.setHelmet (playerSkull player))) (.setHelmetDropChance equip 0)
+              (-> equip (.setChestplate (.getChestplate pEquip))) (.setChestplateDropChance equip 0)
+              (-> equip (.setLeggings (.getLeggings pEquip))) (.setLeggingsDropChance equip 0)
+              (-> equip (.setBoots (.getBoots pEquip))) (.setBootsDropChance equip 0)
+              ; Undroppableなアイテム
+              (def undroppable (filter #(and (.hasItemMeta %) (.hasLore (.getItemMeta %)) (undroppable? (re-find #"Undroppable.*\%" (clojure.string/join "," (.getLore (.getItemMeta %)))))) cloned))
+              (when (not-empty undroppable)
+                (.removeAll cloned undroppable)
+                (.put undroppable-map (.getUniqueId player) (ArrayList. undroppable)))
+              (when (not-empty cloned) (.put inventory-map (.getUniqueId zombie) cloned))
+              ; ClojureはSeqは遅延するのに注意
+              (.clear (.getDrops event)))))))))
 
 (defn -onRespawn [this #^PlayerRespawnEvent event]
   (let [uuid (.getUniqueId (.getPlayer event))]
