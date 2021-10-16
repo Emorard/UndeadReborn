@@ -1,6 +1,6 @@
 name: undeadreborn
-main: hm.moe.pokkedoll.undeadreborn.Main
-version: '4.0-SNAPSHOT'
+main: com.pokkedoll.undeadreborn.Main
+version: '4.1'
 depend: [WorldGuard, WorldEdit]
 description: Spawn zombie when player die
 author: Emorard

@@ -6,8 +6,8 @@
     :methods [[^{org.bukkit.event.EventHandler true} onDeath [org.bukkit.event.entity.EntityDeathEvent] void]
               [^{org.bukkit.event.EventHandler true} onRespawn [org.bukkit.event.player.PlayerRespawnEvent] void]
               [^{org.bukkit.event.EventHandler true} onEnable [org.bukkit.event.server.PluginEnableEvent] void]]
-    :constructors {[hm.moe.pokkedoll.undeadreborn.Main] []})
-  (:import (hm.moe.pokkedoll.undeadreborn Main)
+    :constructors {[com.pokkedoll.undeadreborn.Main] []})
+  (:import (com.pokkedoll.undeadreborn Main)
            (org.bukkit.event.player PlayerRespawnEvent)
            (org.bukkit.event.entity EntityDeathEvent)
            (org.bukkit.entity EntityType Player Zombie LivingEntity)

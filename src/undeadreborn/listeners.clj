@@ -5,15 +5,16 @@
     :implements [org.bukkit.event.Listener]
     :methods [[^{org.bukkit.event.EventHandler true} onDeath [org.bukkit.event.entity.EntityDeathEvent] void]
               [^{org.bukkit.event.EventHandler true} onRespawn [org.bukkit.event.player.PlayerRespawnEvent] void]]
-    :constructors {[hm.moe.pokkedoll.undeadreborn.Main] []})
-  (:import (hm.moe.pokkedoll.undeadreborn Main)
+    :constructors {[com.pokkedoll.undeadreborn.Main] []})
+  (:import (com.pokkedoll.undeadreborn Main)
            (org.bukkit.event.entity EntityDeathEvent)
            (org.bukkit.event.player PlayerRespawnEvent)
            (org.bukkit.entity EntityType Player Zombie Entity LivingEntity)
            (org.bukkit GameMode)
            (org.bukkit.attribute Attribute)
            (org.bukkit.potion PotionEffect)
-           (org.bukkit.scheduler BukkitRunnable))
+           (org.bukkit.scheduler BukkitRunnable)
+           (org.bukkit.persistence PersistentDataType))
   (:require [undeadreborn.api :as api]
             [clojure.core.match :refer [match]]
             ))
@@ -60,7 +61,15 @@
   (when (getField this :world)
     (let [^LivingEntity entity (-> e .getEntity)]
       (match [-> entity .getType]
-             [(EntityType/ZOMBIE)] ""
+             [(EntityType/ZOMBIE)]
+             (let [container (-> entity .getPersistentDataContainer)]
+               (when (-> container (.has api/zombie-key PersistentDataType/STRING))
+                 (let [
+                       contents (-> container (.get (api/namespaced-keys :contents) PersistentDataType/BYTE_ARRAY))
+
+                       ])
+                 )
+               )
              [(EntityType/PLAYER)]
              (when-let [^Player player ((fn [^Player player] (if (= (-> player .getGameMode) (GameMode/SURVIVAL)) player nil)) entity)]
                (let [^Zombie zombie (-> player .getWorld (.spawnEntity (-> player .getLocation) (EntityType/ZOMBIE)))]
@@ -70,11 +79,8 @@
                  (-> zombie (.setCustomName (str (-> player .getName) "'s Zombie")))
                  (-> zombie (.setCustomNameVisible false))
                  (-> zombie (.setAI false))
-                 (.runTaskLater (reify BukkitRunnable (run [_] (-> zombie (.setAI true)))) api/plugin 20)
-                 )
-               )
-             :else nil
-             )
+                 (.runTaskLater (reify BukkitRunnable (run [_] (-> zombie (.setAI true)))) api/plugin 20)))
+             :else nil)
       (cond (= (-> entity .getType) (EntityType/ZOMBIE))
             (= (-> entity .getType) (EntityType/ZOMBIE))
 
