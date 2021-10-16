@@ -12,21 +12,24 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 public class Main extends JavaPlugin {
+
+    private static Main instance;
+
+    public static Main getInstance() {
+        return instance;
+    }
+
     static {
         final ClassLoader cl = Main.class.getClassLoader();
         Thread.currentThread().setContextClassLoader(cl);
-        DynamicClassLoader newcl = (DynamicClassLoader) AccessController.doPrivileged(new PrivilegedAction<Object>() {
-            @Override
-            public Object run() {
-                return new clojure.lang.DynamicClassLoader(cl);
-            }
-        });
+        DynamicClassLoader newcl = (DynamicClassLoader) AccessController.doPrivileged((PrivilegedAction<Object>) () -> new DynamicClassLoader(cl));
         clojure.lang.RT.init();
         clojure.lang.Var.pushThreadBindings(clojure.lang.RT.map(Compiler.LOADER, newcl));
     }
 
     @Override
     public void onEnable() {
+        instance = this;
         String pluginName = getDescription().getName();
         loadClojureNameSpace(pluginName + ".core");
         invokeClojureFunction(pluginName + ".core", "on-enable");

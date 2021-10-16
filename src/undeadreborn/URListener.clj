@@ -11,7 +11,7 @@
            (org.bukkit.event.player PlayerRespawnEvent)
            (org.bukkit.event.entity EntityDeathEvent)
            (org.bukkit.entity EntityType Player Zombie LivingEntity)
-           (org.bukkit GameMode Material Bukkit World ChatColor)
+           (org.bukkit GameMode Material Bukkit World)
            (java.util HashMap ArrayList)
            (org.bukkit.inventory ItemStack)
            (org.bukkit.inventory.meta SkullMeta)
